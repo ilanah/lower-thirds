@@ -25,3 +25,6 @@ accounts-ui
 accounts-password
 aldeed:simple-schema
 iron:router
+utilities:avatar
+momentjs:moment
+differential:event-hooks

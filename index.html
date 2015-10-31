@@ -17,6 +17,7 @@
 <body>
   
 </body>
+<!--######## app ########-->
 <template name="app">
   {{> nav}}
   {{> main}}
@@ -24,6 +25,7 @@
   <!--   {{> loading}} -->
 </template>
 
+<!--######## nav ########-->
 <template name="nav">
 <div class="ui inverted main menu">
   <div class="item logo">
@@ -32,12 +34,14 @@
   </div>
   {{#if currentUser}}
     <div class="ui right dropdown item">
+      {{> avatar user=currUser shape="circle" size="small"}}&nbsp;
       <a href="/logout">Logout</a>
     </div>
   {{/if}}
 </div> 
 </template>
 
+<!--######## main ########-->
 <template name="main">
 {{#if currentUser}}
 <div class="ui container">
@@ -56,46 +60,81 @@
 </div>
   <p>&nbsp;</p>
 <div class="ui raised very padded  container segment">
+    <button id="newRoom" class="ui teal button">
+      <i class="icon plus"></i> New Room
+    </button>
+    <br/><br/>
   <div class="ui cards">
     {{#each rooms}}
       {{> room}}
     {{/each}}
-    <a class="ui card center" href="/room/new" style="min-height: 7em;">
+    <!-- <a id="newRoom" class="ui card center" style="min-height: 7em;">
       <button class="circular ui icon teal button">
         <i class="icon plus"></i>
       </button>
-    </a>
+    </a> -->
   </div>
+  <!-- <button id="newRoom" class="ui right floated icon teal circular button">
+    <i class="icon plus"></i>
+  </button> -->
 </div>
+<br/>
 {{else}}
   <h1 class="ui header">Welcome to Lower Thirds!</h1>
   {{> loginButtons}} 
 {{/if}}   
 </template>
 
+<!--######## room ########-->
 <template name="room">
-  <a class="ui card {{#if slots.count}}olive{{/if}}" href="/room/:{{_id}}">
+  {{#if isNew}}
+  <a class="ui card orange">
+    <div class="content">
+        <a class="ui orange right ribbon label">New</a><br/><br/>
+        <div class="ui form"><input type="text" id="roomTitle" value="{{title}}"></div>
+    </div>
+    <div class="content">
+      <a class="header"></a>
+      <div class="meta">
+        <span class="date">Last updated at {{prettifyDate updatedAt}}, by {{userName editorID}}</span>
+      </div>
+      <div class="description">Owned by {{userName ownerID}}
+      </div>
+    </div>
+    <div class="extra content">
+      <a class="ui button" href="/room/:{{_id}}">Enter Room</a>
+    </div>
+  </a>
+  {{else}}
+  <a class="ui card {{#if slots.count}}olive{{/if}} {{#if isNew}}orange{{/if}}" href="/room/:{{_id}}">
     <div class="content">
       {{#if slots.count}}
         <a class="ui olive right ribbon label">{{slots.count}} Slots</a>         
       {{else}}
         <a class="ui grey right ribbon label">No slots</a>
       {{/if}}
-
-      <div class="header">{{title}}</div>
+      <div class="header">{{title}} </div>
     </div>
-    <div class="content">some data on this room
+    <div class="content">
+      <a class="header"></a>
+      <div class="meta">
+        <span class="date">Last updated at {{prettifyDate updatedAt}}, by {{userName editorID}}</span>
+      </div>
+      <div class="description">Owned by {{userName ownerID}}
+      </div>
     </div>
     <div class="extra content">
       <a class="ui button" href="/room/:{{_id}}">Enter Room</a>
     </div>
   </a>
+  {{/if}}
 </template>
 
+<!--######## roomPage ########-->
 <template name="roomPage">
   {{> nav}}
 {{#if currentUser}}
-<div class="ui container" style="display:table;">
+<div class="ui container">
   <p></p>
   <div class="ui basic mini buttons">
   <a class="ui button" href="/">
@@ -115,22 +154,25 @@
     <div class="label">{{title}} </div>
   </div>
 </div>
-
-<div class="ui raised padded  container segment">
+<br/>
+<div class="ui raised padded container segment clearing">
+    <button id="newSlot" class="ui teal button">
+      <i class="icon plus"></i> New Slot
+    </button>
+    <br/><br/>
   <div class="ui compact clearing segments">
     {{#each slots}}
       {{> slot}}
     {{/each}}            
-    <a class="ui segment center" href="/slot/new">
-      <button class="circular ui icon teal button">
-        <i class="icon plus"></i>
-      </button>
-    </a>
   </div>
 
   <div class="ui container">
     <!-- {{#if slots.count}} -->
-    <div class="ui embed shadow" data-source="youtube" data-id="hgjyr6BPAtA" ></div>
+    <div class="ui embed shadow dimmable dimmed active" data-source="youtube" data-url="http://www.youtube.com/embed/hgjyr6BPAtA?autohide=1&autoplay=1&controls=0&showinfo=0&rel=0&color=white&hq=1&jsapi=1&modestbranding=1&enablejsapi=1&volume=0&mute=1">
+      {{#each slots}}
+        {{>slotOver}}
+      {{/each}}
+    </div>
     <!-- {{/if}} -->
   </div>
 </div>
@@ -139,7 +181,14 @@
 {{/if}}   
 </template>
 
+<!--######## slot ########-->
 <template name="slot">
+  {{#if isNew}}
+   <div class="ui segment orange">
+      <div class="ui corner left label mini"><i class="write icon"></i></div>
+      <div class="ui form"><input type="text" id="slotName" value="{{name}}"></div>
+  </div>
+  {{else}}
    <div class="ui segment {{#if isEdited}}disabled{{/if}} {{#if isPlaying}}yellow{{/if}}">
     {{#if isEdited}}
       <div class="ui corner left label mini"><i class="lock icon"></i></div>
@@ -158,40 +207,30 @@
       </div>
     {{/if}}
   </div>
+  {{/if}}
 </template>
-
-<template name="slotAsItem">
-    <div class="item {{#if isEdited}}disabled{{/if}} {{#if isPlaying}}yellow{{/if}}">
+<!--######## slotOver ########-->
+<template name="slotOver">
+      <!-- {{#if posRight}}right:{{posRight}} !important;{{/if}}
+      {{#if posBottom}}bottom:{{posBottom}} !important;{{/if}} -->
       {{#if isEdited}}
-        <div class="ui corner left label mini"><i class="lock icon"></i></div>
-      {{/if}}
-      <div class="ui small image">
-        {{name}}
-      </div>
-      <div class="middle aligned content">
-        <div class="header">
-          {{main_text}}
-        </div>
-        <div class="description">
-          <p>{{secondary_text}}</p>
-        </div>
-        <div class="extra">
-          <!-- <div class="ui right floated button">
-            Action
-          </div> -->
-          {{#if isEdited}}
+      {{else}}
+        <div id="{{_id}}" class="ui simple dimmer slot {{#if isPlaying}}active{{/if}}" alt="{{name}}" 
+           style="{{#if posLeft}}left:{{posLeft}} !important;{{/if}}
+                  {{#if posTop}}top:{{posTop}} !important;{{/if}}
+                  position:absolute;">
+        {{main_text}}<br>
+        {{secondary_text}}<br>
+          <div class="ui right floated icon button circular tiny">
+          {{#if isPlaying}}
+            <i class="stop icon"></i>
           {{else}}
-            <div class="ui right floated icon button circular tiny">
-            {{#if isPlaying}}
-              <i class="stop icon"></i>
-            {{else}}
-              <i class="play icon"></i>
-            {{/if}}
-            </div>
-          {{/if}}          
+            <i class="play icon"></i>
+          {{/if}}
+          </div>
         </div>
-      </div>
-    </div>
+      {{/if}}
+  
 </template>
 <!-- <template name="footer">
   <div class="main footer">

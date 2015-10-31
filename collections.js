@@ -8,7 +8,16 @@ RoomSchema = new SimpleSchema({
  title : {
    type: String
  },
+ createdAt : {
+ 	type: Date
+ },
+ updatedAt : {
+ 	type: Date
+ },
  ownerID : {
+	 type : String
+ },
+ editorID : {
 	 type : String
  }
  
@@ -21,7 +30,7 @@ Slots = new Mongo.Collection("Slots");
 
 SlotSchema = new SimpleSchema(
 { 
-  roomID: {
+ roomID: {
    	  type: String
  },
  name: {
@@ -31,6 +40,18 @@ SlotSchema = new SimpleSchema(
    type: String
  },
  secondary_text : {
+   type: String
+ },
+ posLeft : {
+   type: String
+ },
+ posTop : {
+   type: String
+ },
+ posRight :{
+   type: String
+ },
+ posBottom :{
    type: String
  },
  isPlaying : {
@@ -86,6 +107,12 @@ SlotSchema = new SimpleSchema(
 		 }
 	 }
 	}
+ },
+ createdAt : {
+ 	type: Date
+ },
+ updatedAt : {
+ 	type: Date
  }
  
 });

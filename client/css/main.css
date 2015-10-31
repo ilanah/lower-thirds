@@ -57,3 +57,20 @@
 	border-radius: .25em;
 	margin-right: 1em !important;
 }
+.dimmed.dimmable > .ui.simple.dimmer.slot {
+    height: 2em;
+    opacity: .9;
+    color: orange;
+    display: inline-table;
+    width: auto;
+    padding: .5em;
+}
+.dimmed.dimmable > .ui.simple.dimmer.slot.active {
+    height: 2em;
+    opacity: .9;
+    color: black;
+    background-color:orange;
+    display: inline-table;
+    width: auto;
+    padding: .5em;
+}
