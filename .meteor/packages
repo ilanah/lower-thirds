@@ -28,3 +28,4 @@ iron:router
 utilities:avatar
 momentjs:moment
 differential:event-hooks
+planettraining:jquery-ui-drag-resize

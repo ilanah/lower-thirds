@@ -10,7 +10,12 @@ Template.registerHelper("prettifyDate", function(date) {
 Template.registerHelper("userName", function(userId) {
     return Meteor.users.findOne(userId).emails[0].address;
 });
-
+function dragSlot(evt,ui)
+{
+  var left = ui.position.left;
+  var top = ui.position.top;
+  Slots.update($(this).attr('id'),{$set:{posLeft:left + 'px',posTop:top + 'px'}});
+}
 /*===============
 	nav
   ===============*/  
@@ -87,24 +92,18 @@ Template.registerHelper("userName", function(userId) {
   	  $('.ui.embed').embed({
       source      : 'youtube',
       url         : "http://www.youtube.com/embed/hgjyr6BPAtA?autohide=1&autoplay=0&controls=0&showinfo=0&rel=0&color=white&hq=1&jsapi=1&modestbranding=1&enablejsapi=1&volume=0&mute=1",
-      Callbacks   :
-        {
-          onCreate : function(url) {
-            debugger;//$module
-          },
-          onDisplay: function() {
-            debugger;//$module
-          }
-        }
+      debug : true/*,
+      onEmbed : function(parameters) {
+        debugger;//$module
+        return parameters;
+      },
+      onDisplay: function() {
+        debugger;//$module
+        $(this).find('iframe').on("ready load playerReady", "#player",function(evt){
+          $(this).mute();
+        })
+      }*/
     });
-    // $('.ui.embed > * > iframe').each(function(ind,item){
-    //                                     $(item).on("load", function(evt){ 
-    //                                         $(this).on("ready playerReady",function(evt2){
-    //                                           debugger;
-    //                                           //$( "#player" ).mute(); 
-    //                                         })                                       
-    //                                     } );
-    //                                   });  
   });
 
   Template.roomPage.helpers({
@@ -115,13 +114,15 @@ Template.registerHelper("userName", function(userId) {
   });
   Template.roomPage.events({
 	  'click #newSlot': function(e, template){
-	   	Slots.insert({roomID:this._id, 
+	   	var newSlotId = Slots.insert({roomID:this._id, 
 	   				  name:'New Slot',
 	   				  createdAt: new Date(),
 	   				  updatedAt: new Date(),
 	   				  editorID:Meteor.userId(),
 	   				  main_text:'main description', 
 	   				  secondary_text:'second description', 
+              posLeft:'0px',
+              posTop:'0px',
 	   				  isPlaying:false, 
 	   				  isEdited:true
 	   				});
@@ -139,13 +140,32 @@ Template.registerHelper("userName", function(userId) {
       'change #slotName': function(e, template){
 	    this.name = $('#slotName').val();
 	    Slots.update(this._id, 
-	    	{$set:{ name:$('#slotName').val(), 
+	    	{$set:{ 
+            name: $('#slotName').val(), 
+            main_text: $('#slotName').val(),
+            secondary_text: $('#slotName').val(),
 	    			updatedAt: new Date(),
 	    			editorID: Meteor.userId(), 
 	   				isEdited:false
 	    		}});
-	     
+	    $('#'+ this._id).draggable({
+      addClasses: false,
+      handle:'.dragg-handle',
+      drag:dragSlot,
+      stop:dragSlot
+    }) 
 	  }
+  })
+/*===============
+  slotOver
+  ===============*/
+  Template.slotOver.onRendered(function(){//$('.dimmer.slot')
+    $('#'+ this.data._id).draggable({
+      addClasses: false,
+      handle:'.dragg-handle',
+      drag:dragSlot,
+      stop:dragSlot
+    })    
   })
 
 /*

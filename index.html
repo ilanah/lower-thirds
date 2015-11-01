@@ -168,9 +168,9 @@
 
   <div class="ui container">
     <!-- {{#if slots.count}} -->
-    <div class="ui embed shadow dimmable dimmed active" data-source="youtube" data-url="http://www.youtube.com/embed/hgjyr6BPAtA?autohide=1&autoplay=1&controls=0&showinfo=0&rel=0&color=white&hq=1&jsapi=1&modestbranding=1&enablejsapi=1&volume=0&mute=1">
+    <div class="ui embed shadow dimmable dimmed active" >
       {{#each slots}}
-        {{>slotOver}}
+        {{> slotOver}}
       {{/each}}
     </div>
     <!-- {{/if}} -->
@@ -213,12 +213,11 @@
 <template name="slotOver">
       <!-- {{#if posRight}}right:{{posRight}} !important;{{/if}}
       {{#if posBottom}}bottom:{{posBottom}} !important;{{/if}} -->
-      {{#if isEdited}}
-      {{else}}
         <div id="{{_id}}" class="ui simple dimmer slot {{#if isPlaying}}active{{/if}}" alt="{{name}}" 
            style="{{#if posLeft}}left:{{posLeft}} !important;{{/if}}
                   {{#if posTop}}top:{{posTop}} !important;{{/if}}
                   position:absolute;">
+        <div class="ui corner left label mini dragg-handle"><i class="move icon"></i></div>
         {{main_text}}<br>
         {{secondary_text}}<br>
           <div class="ui right floated icon button circular tiny">
@@ -228,9 +227,7 @@
             <i class="play icon"></i>
           {{/if}}
           </div>
-        </div>
-      {{/if}}
-  
+        </div>  
 </template>
 <!-- <template name="footer">
   <div class="main footer">
